@@ -1,0 +1,52 @@
+<script  src="__STATIC__/widget/admin/editor/ueditor/ueditor.config.js"></script >
+<script  src="__STATIC__/widget/admin/editor/ueditor/ueditor.all.js"></script >
+<script  src="__STATIC__/widget/admin/editor/ueditor/lang/zh-cn/zh-cn.js"></script >
+{if condition="$is_pjax eq 1"}
+
+<script type="text/javascript">
+
+        $(document).on('pjax:complete', function() {
+                        $.getScript("__STATIC__/widget/admin/editor/ueditor/ueditor.config.js");
+                        $.getScript("__STATIC__/widget/admin/editor/ueditor/ueditor.all.js");
+                        $.getScript("__STATIC__/widget/admin/editor/ueditor/lang/zh-cn/zh-cn.js");
+                        //pjax加载完成之后调用重载多说函数
+                        if ($('textarea[name="{$widget_data.name}"]').length > 0) {
+                                if (typeof UE !== 'undefined') {
+//                                editor_{$widget_data.name}.render('{$widget_data.name}')
+                                        console.log('pjqax结束')
+                                        if(typeof editor_{$widget_data.name}=== 'undefined'){
+                                                console.log('渲染ueditor')
+                                                var editor_{$widget_data.name}= UE.getEditor('{$widget_data.name}',{
+                                                        initialFrameWidth :'100%',//设置编辑器宽度
+                                                        initialFrameHeight: '{$widget_config.editor_height}',//设置编辑器高度
+                                                        scaleEnabled:true,
+                                                });
+
+                                        }
+
+                                }else {
+                                        console.log('bb')
+
+                                }
+                        }
+
+                });
+</script>
+{else /}
+
+<script >
+
+                $(function(){
+                        console.log('页面加载结束')
+                        var editor_{$widget_data.name} = UE.getEditor('{$widget_data.name}',{
+                                initialFrameWidth :'100%',//设置编辑器宽度
+                                initialFrameHeight: '{$widget_config.editor_height}',//设置编辑器高度
+                                scaleEnabled:true,
+//                serverUrl:"{:url('widget/editorPictureUpload')}",
+                        });
+
+                })
+
+</script >
+{/if}
+

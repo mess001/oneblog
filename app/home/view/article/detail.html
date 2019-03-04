@@ -1,0 +1,276 @@
+<section class="container single">
+    <div class="content-wrap">
+        <div class="content">
+            <header class="article-header">
+                <h1 class="article-title"><a href="{:url()}" title="{$article_info.name}">{$article_info.name}</a></h1>
+                <div class="article-meta">
+                    <span class="item article-meta-time"><time class="time" data-toggle="tooltip" data-placement="bottom" title="时间：{$article_info.create_time}"><i class="glyphicon glyphicon-time"></i> {$article_info.create_time}</time></span>
+                    <span class="item article-meta-category" data-toggle="tooltip" data-placement="bottom" title="栏目：{$article_info.category_name}"><i class="glyphicon glyphicon-list"></i> <a href="{:url('index/index',['cid'=>$article_info['cid']])}" title="">{$article_info.category_name}</a></span>
+                    <span class="item article-meta-views" data-toggle="tooltip" data-placement="bottom" title="查看：{$article_info.hits}"><i class="glyphicon glyphicon-eye-open"></i> 共{$article_info.hits}人围观</span>
+                    <span class="item article-meta-comment" data-toggle="tooltip" data-placement="bottom" title="评论：{$article_info.comment_num}"><i class="glyphicon glyphicon-comment"></i> <span class="comment_num">{$article_info.comment_num}</span>个不明物体</span>
+                </div>
+            </header>
+            <article class="article-content" id="article-content">
+                {if condition="$article_info.editor_type eq 1"}
+                <link rel="stylesheet" href="__STATIC__/widget/admin/editor/markdown/css/editormd.preview.css" />
+                    <textarea style="display:none;" placeholder="markdown语言">{$article_info.content_md}</textarea>
+                <script src="__STATIC__/widget/admin/editor/markdown/lib/marked.min.js"></script>
+                <script src="__STATIC__/widget/admin/editor/markdown/lib/prettify.min.js"></script>
+                <script src="__STATIC__/widget/admin/editor/markdown/lib/raphael.min.js"></script>
+                <script src="__STATIC__/widget/admin/editor/markdown/lib/underscore.min.js"></script>
+                <script src="__STATIC__/widget/admin/editor/markdown/lib/sequence-diagram.min.js"></script>
+                <script src="__STATIC__/widget/admin/editor/markdown/lib/flowchart.min.js"></script>
+                <script src="__STATIC__/widget/admin/editor/markdown/lib/jquery.flowchart.min.js"></script>
+                <script src="__STATIC__/widget/admin/editor/markdown/editormd.js"></script>
+                <script>
+                            $(function() {
+                                var testEditormdView2;
+                                testEditormdView2 = editormd.markdownToHTML("article-content", {
+                                    htmlDecode      : "style,script,iframe",  // you can filter tags decode
+                                    emoji           : true,
+                                    taskList        : true,
+                                    tex             : true,  // 默认不解析
+                                    flowChart       : true,  // 默认不解析
+                                    sequenceDiagram : true,  // 默认不解析
+                                });
+                            });
+                </script>
+                {else /}
+                <pre><code class="php">echo 111</code></pre>
+                    {:html_entity_decode($article_info['content'])}
+                    <link rel="stylesheet" href="__STATIC__/module/resource/highlight/src/styles/default.css">
+                    <script src="__STATIC__/module/resource/highlight/src/highlight.js"></script>
+                    <script>hljs.initHighlightingOnLoad();</script>
+
+                {/if}
+                <p class="article-copyright hidden-xs">未经允许不得转载：<a href="{:url('index/index')}">张浩博客</a> » <a href="{:url('article/detail',['id'=>$article_info['id']])}">{$article_info.name}</a></p>
+            </article>
+            <div class="article-tags">标签：
+                {volist name="tag_list" id="vo" empty="无"}
+                <a href="{:url('index/index',['tid'=>$vo.id])}" rel="tag">{$vo.name}</a>
+                {/volist}
+            </div>
+            <div class="relates">
+                <div class="title">
+                    <h3>相关推荐</h3>
+                </div>
+                <ul>
+                    {notempty name="$prev"}
+                    <li>上一篇：<a href="{:url('detail',['id'=>$prev['id']])}">{$prev.name}</a></li>
+                    {/notempty}
+                    {notempty name="$next"}
+                    <li>下一篇：<a href="{:url('detail',['id'=>$next['id']])}">{$next.name}</a></li>
+                    {/notempty}
+                </ul>
+            </div>
+            <div class="title" id="comment">
+                <h3>
+                    评论
+
+                    {if condition="$countComment gt 0"}
+                    <small> (<span class="comment_num">{$comment_list->total()}</span>)</small>
+                    {else /}
+                    <small>抢沙发</small>
+                    {/if}
+                </h3>
+            </div>
+            {if condition="UID==0"}
+            <div id="respond">
+              <div class="comment-signarea">
+                <h3 class="text-muted">评论前必须登录！</h3>
+                <p>
+                    <a data-toggle="modal" data-target="#loginModal" class="btn btn-primary login" rel="nofollow">立即登录</a> &nbsp;
+                    <a data-toggle="modal"  data-target="#registerModal" class="btn btn-default register" rel="nofollow">注册</a>
+                </p>
+                <!--<h3 class="text-muted">当前文章禁止评论</h3>-->
+              </div>
+            </div>
+            {else /}
+            <div id="respond">
+                <form action="" method="post" id="comment-form">
+                    <div class="comment">
+                        <div class="comment-title"><img class="avatar" src="{$user_info['avatar']!=0?get_picture_url($user_info['avatar']):'__STATIC__/module/home/images/default_head_img.gif'}" alt="" /></div>
+                        <div class="comment-box">
+                            <textarea placeholder="您的评论可以一针见血" name="comment" id="comment-textarea" cols="100%" rows="3" tabindex="1" ></textarea>
+                            <div class="comment-ctrl"> <span class="emotion"><img src="__STATIC__/module/home/images/face/5.png" width="20" height="20" alt="" />表情</span>
+                                <div class="comment-prompt"> <i class="fa fa-spin fa-circle-o-notch"></i> <span class="comment-prompt-text"></span> </div>
+                                <input type="hidden" value="{$article_info.id}" class="articleid" />
+                                <button type="submit" name="comment-submit" id="comment-submit" tabindex="5" aid="1" cid="0">评论</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {/if}
+            <div id="postcomments">
+
+                    <ol class="commentlist">
+                        {volist name="comment_list" id="vo" key="key" }
+                        <li class="comment-content"><span class="comment-f reply">
+                            <icon class="icon glyphicon glyphicon-heart-empty"></icon>回复</span>
+                            <div class="comment-avatar"><img class="avatar" src="{$vo['avatar']!=0?get_picture_url($vo['avatar']):'__STATIC__/module/home/images/default_head_img.gif'}" alt="" /></div>
+                            <div class="comment-main">
+                                <p><span class="nickname">{$vo.nickname}</span><span class="time">({$vo.create_time})</span>
+
+                                </p>
+                                {:html_entity_decode($vo['comment'])}
+                            </div>
+                        </li>
+                        {/volist}
+                    </ol>
+                    {empty name="comment_list"}
+                        <p class="empty">暂时没有评论，快去抢沙发！</p>
+                    {else /}
+                        <!--分页-->
+                        <div class="box-footer clearfix text-center">
+                            <button class="btn btn-info " id="more-comment" page="1">加载更多</button>
+                        </div>
+
+                    {/empty}
+            </div>
+        </div>
+    </div>
+    <div id="outerdiv" style="text-align: center;position: fixed;z-index: 1000;top: 0;left: 0;
+    width: 100%;height: 100%;background-color: rgba(255,255,255,.9);">
+        <img id="bigimg" style="height: auto;width: 46.6325%;border: 0;
+        margin: auto;position: absolute;top: 0;bottom: 0;left: 0;right: 0;" src="" />
+    </div>
+    <script type="text/javascript">
+        //图片放大
+        $("#outerdiv").hide();
+        $(function(){
+            $(".article-content img").mouseover(function(){
+                $(this).css("cursor","pointer");
+            });
+
+            $(".article-content img").click(function(){
+                var _this = $(this);//将当前的pimg元素作为_this传入函数
+                imgShow("#outerdiv", "#bigimg", _this);
+            });
+        });
+
+        function imgShow(outerdiv, bigimg, _this) {
+            var src = _this.attr("src");//获取当前点击的pimg元素中的src属性
+            $('#outerdiv').attr('display' , 'block');
+            $(bigimg).attr("src" , src);//设置#bigimg元素的src属性
+            $(outerdiv).fadeIn("fast");
+//再次点击淡出消失弹出层
+            $(outerdiv).click(function () {
+                $(this).fadeOut("fast");
+            });
+        }
+    </script>
+    <script type="text/javascript">
+        $(function(){
+            if($('.emotion').length>0){
+                $('.emotion').qqFace({
+                     id : 'facebox',
+                     assign:'comment-textarea',
+                     path:'/static/module/home/images/arclist/'	//表情存放的路径
+                 });
+            }
+
+            /*文章评论*/
+            $("#comment-submit").click(function(){
+                var commentContent = $("#comment-textarea");
+                var commentButton = $("#comment-submit");
+                var promptBox = $('.comment-prompt');
+                var promptText = $('.comment-prompt-text');
+                var articleid = $('.articleid').val();
+                promptBox.fadeIn(400);
+                if(commentContent.val() === ''){
+                    promptText.text('请留下您的评论');
+                    return false;
+                }
+                commentButton.attr('disabled',true);
+                commentButton.addClass('disabled');
+                promptText.text('正在提交...');
+                $val=replace_em(commentContent.val());
+
+                $.ajax({
+                           type:"POST",
+                           url:"{:url('comment/add')}" ,
+                           data:{"comment" : replace_em(commentContent.val()),'aid':articleid,'pid':0},
+                           cache:false, //不缓存此页面
+                           success:function(data){
+                               if(data.code=='success'){
+                                   promptText.text(data.msg);
+                                   commentContent.val(null);
+                                   $(".commentlist").fadeIn(300);
+                                   $html='';
+                                   var now = new Date().Format("yyyy-MM-dd HH:mm:ss");
+
+                                   $html+='<li class="comment-content"><span class="comment-f reply">'+
+                                           '<icon class="icon glyphicon glyphicon-heart-empty"></icon>回复</span>'+
+                                           '<div class="comment-avatar"><img class="avatar" src="{$user_img}" alt="" draggable="false"></div>'+
+                                           '<div class="comment-main">'+
+                                           '<p><span class="nickname">{:session("user_info")["nickname"]}</span><span class="time">('+now+')</span></p>'+
+                                           $val+
+                                           '</div></li>';
+                                   $num=$('.comment_num');
+                                   $num_new=parseInt($num.eq(0).text())+1
+                                   $num.text($num_new);
+                                   $('.empty').remove();
+                                   $(".commentlist").prepend($html);
+                                   commentButton.attr('disabled',false);
+                                   commentButton.removeClass('disabled');
+                                   promptBox.fadeOut(300);
+
+                               }else{
+                                   promptText.text(data.msg);
+                               }
+
+                           }
+                       });
+                /*$(".commentlist").append(replace_em(commentContent.val()));*/
+                return false;
+            });
+            $('#more-comment').click(function(){
+                var articleid = $('.articleid').val();
+                $this=$(this);
+                $page=$this.attr('page')
+                $page++;
+                $.ajax({
+                           type:"POST",
+                           url:"{:url('comment/getComment')}" ,
+                           data:{'aid':articleid,'page':$page},
+                           cache:false, //不缓存此页面
+                           success:function(data){
+                               if(data.code=='success'){
+                                   if(data.data.data!=false){
+                                       $this.attr('page',$page);
+                                       $html='';
+                                       $.each(data.data.data,function(k,v){
+                                           $html+='<li class="comment-content"><span class="comment-f reply">'+
+                                                   '<icon class="icon glyphicon glyphicon-heart-empty"></icon>回复</span>'+
+                                                   '<div class="comment-avatar"><img class="avatar" src="'+ v.user_img_url+'" alt="" draggable="false"></div>'+
+                                                   '<div class="comment-main">'+
+                                                   '<p><span class="nickname">'+v.nickname+'</span><span class="time">('+ v.create_time+')</span></p>'+
+                                                   v.comment+
+                                                   '</div></li>';
+                                       })
+                                       $('.commentlist').append($html);
+                                   }else{
+                                       $this.attr('disabled','disabled');
+                                       $this.text('没有更多了');
+                                   }
+
+                               }else{
+                                   promptText.text(data.msg);
+                               }
+
+                           }
+                       });
+            })
+            $('#postcomments').on('click','.reply',function(){
+                $textarea=$('#comment-textarea');
+               $comment=$textarea.val();
+                $nickname=$(this).parents('li').find('.nickname').text();
+                $comment+='@'+$nickname+' ';
+                $textarea.val($comment)
+            })
+        });
+    </script>
+    <!--边栏-->
+    {include file="layout/sidebar"/}
+</section>

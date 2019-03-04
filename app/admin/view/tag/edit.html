@@ -1,0 +1,36 @@
+<form action="{:url()}" method="post" class="form_single">
+    <div class="box">
+      <div class="box-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label>名称</label>
+              <span class="">（标签名称）</span>
+              <input class="form-control" name="name" placeholder="请输入标签名称" value="{$info['name']|default=''}" type="text">
+            </div>
+          </div>
+    </div>
+            
+
+
+      <div class="row">
+          <div class="col-md-12">
+              <div class="form-group">
+                  <label>排序</label>
+                  <span class="">（排序从小到大）</span>
+                  <input class="form-control" name="sort" placeholder="请输入排序" value="{$info['sort']|default='0'}" type="text">
+              </div>
+          </div>
+      </div>
+        
+      <div class="box-footer">
+          
+        <input type="hidden" name="id" value="{$info['id']|default='0'}"/>
+        
+        {include file="layout/edit_btn_group"/}
+        
+      </div>
+        
+      </div>
+      </div>
+</form>

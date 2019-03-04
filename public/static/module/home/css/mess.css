@@ -1,0 +1,86 @@
+.tips-text{
+    color: red;
+}
+.home-login-captcha-img{
+    height: 40px;
+    width: auto;
+}
+.magin-top-20{
+    margin-top: 20px;
+}
+.img-responsive{
+    width: 100%;
+}
+.single .content{
+    padding: 0 20px;
+    background-color: #fff;
+    border: 1px solid #EAEAEA;
+    border-radius: 4px;
+}
+.red{
+    color: red;
+}
+.comment-content{
+    position: relative;
+}
+.reply{
+    font-size: 14px;
+
+}
+.icon{
+    margin:0  3px;
+
+}
+.nickname{
+    font-size: 16px;
+    color: black;
+}
+p.empty{
+    text-align: center;
+    margin: 20px ;
+}
+.user_info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px  20px;
+}
+
+.img-cover{
+    /*position: absolute;*/
+    opacity: 0.8;
+    width: 80px;
+    height: 80px;;
+    position: absolute;
+    top: 0;
+    left:0;;
+    display: none;
+    cursor: pointer;
+}
+.header-img{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+
+}
+#picker:hover .img-cover{
+    display: block;
+}
+#picker{
+    position: relative;
+    color: black;
+}
+.user_info .webuploader-pick{
+    padding: 0;
+    background: none;
+}
+.content_notice{
+    padding: 30px 50px;
+    border: 1px solid #EEE;
+}
+.content_info{
+    padding: 20px;
+    padding-bottom: 100px;
+    min-height: 500px;
+    background: #ffffff;
+}

@@ -1,0 +1,48 @@
+<div class="container-box">
+
+
+    <section class="container">
+        <div class="content-wrap">
+            <div class="content">
+
+                <div class="title">
+                    <h3>拥有关键字<span class="red">{$Think.get.keyword}</span>的文章</h3>
+
+                </div>
+                <!--文章-->
+                {empty name="article_list"}
+                <p class="empty">
+                    暂无文章
+                </p>
+
+                {else /}
+                {volist name="article_list" id="vo"}
+                <article class="excerpt excerpt-1">
+                    <a class="focus" href="{:url('article/detail',['id'=>$vo['id']])}" title="">
+                        <img class="thumb" data-original="{$vo.cover_id|get_picture_url}" src="{$vo.cover_id|get_picture_url}" alt="">
+                    </a>
+                    <header>
+                        <a class="cat" href="{:url('index/index',['cid'=>$vo['category_id']])}">{$vo.category_name}<i></i></a>
+                        <h2><a href="{:url('article/detail',['id'=>$vo['id']])}" title="{$vo.name}">{$vo.name}</a></h2>
+                    </header>
+                    <p class="meta">
+                        <time class="time"><i class="glyphicon glyphicon-time"></i> {$vo.create_time}</time>
+                        <span class="views"><i class="glyphicon glyphicon-eye-open"></i> 共{$vo.hits}人围观</span>
+                        <a class="comment" href="{:url('article/detail',['id'=>$vo['id']])}#comment">
+                            <i class="glyphicon glyphicon-comment"></i> {$vo.comment_num}个不明物体
+                        </a>
+                    </p>
+                    <p class="note">{$vo.content_t}</p>
+                </article>
+                {/volist}
+                <!--分页-->
+                <div class="box-footer clearfix text-center">
+                    {$article_list->render()}
+                </div>
+                {/empty}
+            </div>
+        </div>
+        <!--边栏-->
+        {include file="layout/sidebar"/}
+    </section>
+

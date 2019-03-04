@@ -1,0 +1,20 @@
+<section class="container container-page">
+  <div class="pageside">
+    <div class="pagemenus">
+      <ul class="pagemenu">
+        <li><a href="{:url('tag/index')}">标签云</a></li>
+        <li><a href="{:url('link/index')}">友情链接</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="content">
+    <header class="article-header">
+      <h1 class="article-title">友情链接</h1>
+    </header>
+    <ul class="plinks">
+      {volist name="link_list" id="vo"}
+      <li><a href="{:geturl($vo['url'])}" title="{$vo.name}" target="_blank" rel="nofollow"><img src="{$vo.img_id|get_picture_url}" alt="">{$vo.name}</a></li>
+      {/volist}
+    </ul>
+  </div>
+</section>

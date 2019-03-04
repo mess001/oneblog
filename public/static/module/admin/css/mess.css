@@ -1,0 +1,19 @@
+.tag-box{
+    display: flex;
+    flex-direction:row;
+    justify-content: flex-start;
+    padding: 24px;
+    padding-left: 0;
+}
+.tag-item{
+    padding: 5px 12px;
+    font-size: 14px;
+    background: #e4e4e4;
+    border-radius: 5px;
+    margin:0 15px;
+    cursor: pointer;
+}
+.tag-current{
+    background: orange;
+    color: white;
+}

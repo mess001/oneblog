@@ -1,0 +1,17 @@
+<script  src="__STATIC__/widget/admin/editor/ueditor/ueditor.config.js"></script >
+<script  src="__STATIC__/widget/admin/editor/ueditor/ueditor.all.js"></script >
+<script  src="__STATIC__/widget/admin/editor/ueditor/lang/zh-cn/zh-cn.js"></script >
+<script >
+
+    $(function(){
+        var editor_{$widget_data.name} = UE.getEditor('{$widget_data.name}',{
+            initialFrameWidth :'100%',//设置编辑器宽度
+            initialFrameHeight: '{$widget_config.editor_height}',//设置编辑器高度
+            scaleEnabled:true,
+//                serverUrl:"{:url('widget/editorPictureUpload')}",
+        });
+
+    })
+
+</script >
+

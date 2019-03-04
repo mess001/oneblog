@@ -1,0 +1,194 @@
+<form action="{:url()}" method="post" class="form_single">
+    <!--<script src="__STATIC__/module/admin/js/mess.js"></script>-->
+    <div class="box">
+      <div class="box-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>标题</label>
+              <span class="">（文章标题名称）</span>
+              <input class="form-control" name="name" placeholder="请输入文章标题名称" value="{$info['name']|default=''}" type="text">
+            </div>
+          </div>
+            
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>分类</label>
+              <span class="">（文章分类）</span>
+                <select name="category_id" class="form-control">
+                    {volist name='article_category_list' id='vo'}
+                        <option value="{$vo['id']}" {notempty name="info['category_id']"}{if condition="$info['category_id'] eq $vo['id']"} selected="selected" {/if}{/notempty} >{$vo['name']}</option>
+                    {/volist}
+                </select>
+            </div>
+          </div>
+            
+          <div class="col-md-6">
+            <div class="form-group">
+                <label>描述</label>
+                <span class="">（文章描述信息/简介）</span>
+                <textarea class="form-control" name="describe" rows="3" placeholder="请输入文章描述信息/简介">{$info['describe']|default=''}</textarea>
+            </div>
+          </div>
+            
+          <div class="col-md-6">
+            <div class="form-group">
+                <label>封面图片</label>
+                <span class="">（请上传单张封面图片）</span>
+                <br/>
+                {assign name="cover_id" value="$info.cover_id|default='0'" /}
+                {:widget('file/index', ['name' => 'cover_id', 'value' => $cover_id, 'type' => 'img'])}
+            </div>
+          </div>
+            
+          <div class="col-md-6">
+            <div class="form-group">
+                <label>多图片</label>
+                <span class="">（请上传多图片）</span>
+                <br/>
+                
+                {assign name="img_ids" value="$info.img_ids|default=''" /}
+                {:widget('file/index', ['name' => 'img_ids', 'value' => $img_ids, 'type' => 'imgs'])}
+                
+            </div>
+          </div>
+            
+            
+          <div class="col-md-6">
+            <div class="form-group">
+                <label>附件</label>
+                <span class="">（文章可下载附件）</span>
+                <br/>
+                {assign name="file_id" value="$info.file_id|default='0'" /}
+                {:widget('file/index', ['name' => 'file_id', 'value' => $file_id, 'type' => 'file'])}
+            </div>
+          </div>
+            
+          </div>
+          <!--标签列表-->
+          <div class="row">
+
+              <div class="col-md-12">
+                  <div class="form-group">
+                      <label>标签</label>
+                      <div class="tag-box">
+                          {volist name="tags" id="vo"}
+                          <div class="tag-item {:in_array($vo['id'],$tags_checked)?'tag-current':''}" data-id="{$vo.id}" data-checked="{:in_array($vo['id'],$tags_checked)?'true':'false'}">{$vo.name}</div>
+                          {/volist}
+                          <input type="hidden" value="{:implode($tags_checked,',')}" name="tagids">
+                      </div>
+                  </div>
+              </div>
+
+          </div>
+
+          <script>
+              $(function(){
+                  $('.tag-box .tag-item').click(function(){
+                      $flag=$(this).attr('data-checked');
+                      if($flag=='false'){
+                          $flag=false;
+                      }else{
+                          $flag=true;
+                      }
+                      $flag=!$flag;
+                      if($flag==false){
+                          $(this).removeClass('tag-current')
+                      }else{
+                          $(this).addClass('tag-current')
+                      }
+                      $(this).attr('data-checked',$flag);
+                      eachTag();
+                  })
+              })
+
+
+              //便利标签列表中选中的
+              function eachTag(){
+                  $id='';
+                  $('.tag-box .tag-item').each(function(){
+
+                      if($(this).attr('data-checked')=='true'){
+                          $id+=$(this).attr('data-id')+',';
+
+                      }
+                      $('input[name="tagids"]').val($id)
+                  })
+              }
+          </script>
+
+        <div class="row">
+
+
+
+
+          <div class="col-md-12">
+              {switch name="Think.config.editor_type"}
+              {case value="0"}
+              <!--富文本-->
+                  <div class="form-group">
+                      <label>文章内容</label>
+                      <textarea class=" textarea_editor" name="content" id="content" placeholder="请输入文章内容">{$info['content']|default=''}</textarea>
+
+                      {:widget('editor/baidu', ['name' => 'content', 'value' => ''])}
+                  </div>
+              {/case}
+              {case value="1"}
+              <!--markdown-->
+                  <div class="form-group">
+                      <label>文章内容</label>
+                      <div id="content" style="z-index: 9999;">
+                          <textarea  name="content" style="display:none;">{$info['content_md']|default=''}</textarea>
+                      </div>
+                      {:widget('editor/markdown', ['name' => 'content', 'value' => ''])}
+                  </div>
+              {/case}
+              {default /}
+              <!--kingeditor-->
+                  <div class="form-group">
+                      <label>文章内容</label>
+                      <textarea class=" textarea_editor" name="content"  placeholder="请输入文章内容">{$info['content']|default=''}</textarea>
+                      {:widget('editor/index', ['name' => 'content', 'value' => ''])}
+                  </div>
+              {/switch}
+
+          </div>
+            <input type = "hidden" name="editor_type" value="{$Think.config.editor_type}">
+        </div>
+
+      <div class="row">
+          <div class="col-md-6">
+              <div class="form-group">
+                  <label>排序</label>
+                  <span class="">（排序从小到大）</span>
+                  <input class="form-control" name="sort" placeholder="请输入排序" value="{$info['sort']|default='0'}" type="text">
+              </div>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-md-6">
+              <div class="form-group">
+                  <label>是否推荐</label>
+                  <span>(在首页推荐中显示)</span>
+                  <div>
+                      <label class="margin-r-5"><input type="radio" checked="checked" name="is_top"  value="0"> 否</label>
+                      <label><input type="radio" name="is_top" value="1"> 是</label>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="box-footer">
+          
+        <input type="hidden" name="id" value="{$info['id']|default='0'}"/>
+        
+        {include file="layout/edit_btn_group"/}
+        
+      </div>
+        
+      </div>
+      </div>
+</form>
+<script type="text/javascript">
+    ob.setValue("is_top", {$info['is_top']|default=0});
+</script>

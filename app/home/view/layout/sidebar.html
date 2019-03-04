@@ -1,0 +1,229 @@
+<aside class="sidebar">
+        <div class="widget widget-tabs">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#notice" aria-controls="notice" role="tab" data-toggle="tab">网站公告</a></li>
+                <li role="presentation" ><a href="#centre" aria-controls="centre" role="tab" data-toggle="tab">会员中心</a></li>
+                <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">联系站长</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane notice active" id="notice">
+                    <ul>
+                        {volist name="notice_list" id="vo"}
+                        <li>
+                            <time >{$vo.create_time}</time>
+                            <a href="{:url('notice/detail',['id'=>$vo['id']])}" target="_blank">{$vo.name}</a></li>
+                        <li>
+                        {/volist}
+                    </ul>
+                </div>
+
+
+                <div role="tabpanel" class="tab-pane centre " id="centre">
+                    {if condition="session('user_info')"}
+
+                        <div class="user_info">
+                            <div id="picker"  title="点击上传新头像">
+                                <div id="">
+                                    <img id="logoImg" title="点击上传新头像" class="header-img" src="{$user_info['avatar']!=0?get_picture_url($user_info['avatar']):'__STATIC__/module/home/images/default_head_img.gif'}">
+                                </div>
+                                <div class="img-cover">
+                                    <img src="__STATIC__/module/home/images/img_cover.png" class="header-img" alt="" title="点击上传新头像" id="img-cover">
+                                </div>
+                            </div>
+                            <div id="info"></div>
+
+
+                            <span>{:session('user_info')['nickname']}</span><a href="javascript:;" class=" logout" url="{:url('login/logout')}">安全退出</a>
+                        </div>
+                    {else /}
+                        <h4>需要登录才能进入会员中心</h4>
+                        <p>
+                            <a data-toggle="modal" data-target="#loginModal" class="btn btn-primary">立即登录</a>
+                            <a data-toggle="modal" data-target="#registerModal" class="btn btn-default">现在注册</a>
+                        </p>
+                    {/if}
+                </div>
+                <div role="tabpanel" class="tab-pane contact" id="contact">
+                    <h2>Email:
+                    <a href="mailto:412424561@qq.com" data-toggle="tooltip" data-placement="bottom" title="412424561@qq.com">412424561@qq.com</a></h2>
+                    <h2>QQ群:425377942 <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=866211e959d74ced34b74039ab56162f60bdb05c4e5978a250db893f49f475d4"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="技术讨论群" title="技术讨论群"></a></h2>
+
+
+                </div>
+            </div>
+            <link rel="stylesheet" href="__STATIC__/module/resource/webuploader/webuploader.css">
+            <script src="__STATIC__/module/resource/webuploader/webuploader.js"></script>
+            <script>
+                $(function(){
+                    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                        //shown.bs.tab为tab选项卡高亮事件,
+                        //关键操作！！！！
+                        // 获取已激活的标签页的名称
+                        var activeTab = $(e.target)[0].hash;
+                        //hash 属性是一个可读可写的字符串，该字符串是 URL 的锚部分（从 # 号开始的部分）
+
+                        if(activeTab === "#centre"){
+                            //当相应的标签被点击时，进行图片上传渲染
+                            //logo上传
+                            /*init webuploader*/
+                            var $info = $('#info');
+                            var uploader = WebUploader.create({
+                                //是否自动上传，如果为false，则在之前的html代码中需要再设置一个button来进行上传
+                                auto: true,
+                                // swf文件路径（根据你自己的工程目录进行设置）
+                                swf: '__STATIC__/module/resource/webuploader/Uploader.swf',
+                                // 文件接收服务端（路由）
+                                //服务器主要负责接受图片并给定唯一id，最后转存到其他目录
+                                server: "{:url('File/pictureUpload',array('session_id'=>session_id()))}",
+                                pick: {
+                                    // 选择文件的按钮。可选
+                                    id: '#picker',
+                                    // innerHTML: "点击上传新头像",
+                                    //不允许单次上传时同时选择多个文件
+                                    multiple: false
+                                },
+                                //允许上传的文件总数量为1
+                                fileNumLimit: 1,
+                                // 只允许选择图片文件。
+                                accept: {
+                                    title: 'Images',
+                                    extensions: 'jpg,jpeg,png',
+                                    //此处一定要写得详细，如果使用'image/*'，chrome浏览器会出现打开资源管理器特别慢的bug！！！！！
+                                    mimeTypes: 'image/jpg,image/png,image/jpeg'
+                                }
+                            });
+
+                            uploader.on('fileQueued', function(file,data) {
+//                                    $("#logoImg").parent("div").attr({
+//                                                                         id: file.id
+//                                                                     });
+                                //成功消息不做显示
+                                // var $img_info = $('<span class="info" class="pull-right">' + file.name + '<p class="state"></p>' + '</span>');
+                                // $info.append($img_info);
+
+                                var $img = $("#logoImg");
+                                // 创建缩略图
+                                uploader.makeThumb(file, function(error, src) {
+                                    if (error) {
+                                        $img.replaceWith('<span>不能预览</span>');
+                                        return;
+                                    }
+                                    $img.attr('src', src);
+                                }, 80, 80); //100x100为缩略图尺寸
+                            });
+                            uploader.on("error", function(type) {
+                                if (type == "Q_TYPE_DENIED") {
+                                    alert("请上传图片格式文件");
+                                } else if (type == "F_EXCEED_SIZE") {
+                                    alert("文件大小不能超过8M");
+                                } else if (type == "Q_EXCEED_NUM_LIMIT") {
+                                    alert("只能上传一个图片");
+                                }
+                            });
+
+                            // 文件上传过程中创建进度条实时显示。
+                            uploader.on('uploadProgress', function(file, percentage) {
+                                var $li = $('#' + file.id),
+                                        $percent = $li.find('.progress .progress-bar');
+
+                                // 避免重复创建
+                                if (!$percent.length) {
+                                    $percent = $('<div class="progress progress-striped active">' +
+                                            '<div class="progress-bar" role="progressbar" style="width: 0%">' +
+                                            '</div>' +
+                                            '</div>').appendTo($li).find('.progress-bar');
+                                }
+
+                                // $info.find('p.state').text('上传中');
+
+                                $percent.css('width', percentage * 100 + '%');
+                            });
+
+                            // 文件上传成功
+                            // uploader.on('uploadSuccess', function(file) {
+                            //   $info.find('p.state').text('已上传').css({
+                            //     color: 'green'
+                            //   });
+                            // });
+
+                            //文件上传是否成功的状态
+                            //根据服务器返回的数据判断文件是否上传成功
+                            //这个函数会接收来自服务器的文件上传是否成功的状态，这个事件发生在‘uploadError’之前
+                            //data为服务器返回的数据，是个对象
+                            uploader.on("uploadAccept", function(file, data) {
+                                if (data.op_result == "0") {
+                                    // 通过return false来告诉组件，此文件上传有错。
+                                    return false;
+                                }
+                                //成功，则将logo的url保存
+                                $("#picker").attr({
+                                    title: '点击更换头像'
+                                });
+                            });
+                            // 文件上传失败，显示上传出错
+                            uploader.on('uploadError', function(file) {
+                                var $img_info = $('<span class="info pull-left">' + file.name + '<p class="state"></p>' + '</span>');
+                                $info.append($img_info);
+                                $info.find('p.state').text('上传出错').css({
+                                    color: 'red'
+                                });
+                                //如果上传失败，logo显示为默认logo
+                                $("#logoImg").attr('src', "/static/img/failLogo.png");
+                                $("#logoURL").val("/static/img/defaultLogo.png");
+                                //2秒之后提示信息消失
+                                setTimeout(function() {
+                                    $img_info.remove();
+                                }, 2000);
+                            });
+
+                            // 完成上传
+                            uploader.on('uploadComplete', function(file) {
+                                $('#' + file.id).find('.progress').fadeOut();
+                                //重置uploader，令其可以继续上传logo
+                                uploader.reset();
+                            });
+                        }
+                    });
+
+                })
+
+
+            </script>
+        </div>
+        <div class="widget widget_sentence">
+            <h3>每日一句</h3>
+            <div class="widget-sentence-content">
+                <h4>{:date('Y年m月d日',time())}</h4>
+                <p>{$word.en}<br />
+                    {$word.cn}</p>
+            </div>
+        </div>
+    <div class="fixed">
+
+    <div class="widget widget_search">
+        <form class="navbar-form" action="{:url('index/index')}" method="get">
+            <div class="input-group">
+                <input type="text" name="keyword" class="form-control" size="35" placeholder="请输入关键字" maxlength="15" autocomplete="off">
+            <span class="input-group-btn">
+            <button class="btn btn-default btn-search"  type="submit">搜索</button>
+            </span> </div>
+        </form>
+    </div>
+    <div class="widget widget_hot">
+        <h3>热门文章</h3>
+        <ul>
+            {volist name="hot_list" id="vo"}
+            <li>
+                <a href="{:url('article/detail',['id'=>$vo['id']])}">
+                    <span class="thumbnail"><img class="thumb" data-original="{$vo.cover_id|get_picture_url}" src="{$vo.cover_id|get_picture_url}" alt=""></span>
+                    <span class="text">{$vo.name}</span>
+                    <span class="muted"><i class="glyphicon glyphicon-time"></i> {:date('Y-m-d',strtotime($vo['create_time']))} </span>
+                    <span class="muted"><i class="glyphicon glyphicon-eye-open"></i> {$vo.hits}</span>
+                </a>
+            </li>
+            {/volist}
+        </ul>
+    </div>
+    </div>
+
+</aside>

@@ -1,0 +1,48 @@
+<link rel="stylesheet" href="__STATIC__/widget/admin/editor/markdown/css/editormd.css" />
+<script type="text/javascript">
+var arr = [
+    static_root + 'widget/admin/editor/markdown/editormd.js',
+];
+
+ob.loadMultiScripts(arr).done(function() {
+    
+    var editor_{$widget_data.name};
+    editor_{$widget_data.name} = editormd("{$widget_data.name}", {
+        width   : "100%",
+        height  : 640,
+        syncScrolling : "single",
+        path    : static_root + 'widget/admin/editor/markdown/lib/',
+        saveHTMLToTextarea : true,//注意3：这个配置，方便post提交表单
+        /**上传图片相关配置如下*/
+        imageUpload : true,
+        imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+        imageUploadURL : "{:url('widget/editormdPictureUpload')}",//注意你后端的上传图片服务地址
+    });
+}).fail(function(){
+    
+  alert('editormd加载失败...');
+});
+</script>
+<!--<script src="../editormd.min.js"></script>-->
+<!--<script type="text/javascript">-->
+    <!--var testEditor;-->
+
+    <!--$(function() {-->
+        <!--testEditor = editormd("test-editormd", {-->
+            <!--width   : "90%",-->
+            <!--height  : 640,-->
+            <!--syncScrolling : "single",-->
+            <!--path    : "../lib/"-->
+        <!--});-->
+
+        <!--/*-->
+         <!--// or-->
+         <!--testEditor = editormd({-->
+         <!--id      : "test-editormd",-->
+         <!--width   : "90%",-->
+         <!--height  : 640,-->
+         <!--path    : "../lib/"-->
+         <!--});-->
+         <!--*/-->
+    <!--});-->
+<!--</script>-->
